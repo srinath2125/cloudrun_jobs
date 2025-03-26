@@ -1,0 +1,60 @@
+Steps to Run Your Cloud Build YAML File (cloudbuild.yaml)
+
+1. Set Up Authentication (If Not Already Done)
+
+Before running Cloud Build, ensure you are authenticated with Google Cloud:
+
+  {      gcloud auth login         }
+
+gcloud auth configure-docker asia-south1-docker.pkg.dev
+
+Also, set your active project:
+
+{         gcloud config set project {PROJECT_ID} your project ID           }
+
+2. Enable Required Services (If Not Done)
+
+Ensure the necessary Google Cloud APIs are enabled:
+
+{       gcloud services enable cloudbuild.googleapis.com artifactregistry.googleapis.com       }
+
+3. Submit the Build Job
+
+Run the following command in the directory containing cloudbuild.yaml:
+
+{     gcloud builds submit --config=cloudbuild.yaml --substitutions=_PROJECT_ID=your-project-id,_REPO_NAME=your-repo-name,_IMAGE_NAME=your-image-name         }
+
+Replace:
+
+    your-project-id → Your Google Cloud project ID.
+
+    your-repo-name → The Artifact Registry repository name.
+
+    your-image-name → The Docker image name.
+
+4. Verify the Build Status
+
+After submission, check the build logs:
+
+{      gcloud builds list          }
+
+To view logs for a specific build:
+
+{      gcloud builds logs --stream BUILD_ID        }
+
+(Replace BUILD_ID with the actual build ID from the list.)
+
+
+5. Verify the Image in Artifact Registry
+
+Check if the image was successfully pushed:
+
+{           gcloud artifacts docker images list asia-south1-docker.pkg.dev/your-project-id/your-repo-name        }
+ 
+6. Run the Built Image (Optional)
+
+If you want to test the image locally:
+
+{       docker pull asia-south1-docker.pkg.dev/your-project-id/your-repo-name/your-image-name           } 
+{     docker run -p 8080:8080 asia-south1-docker.pkg.dev/your-project-id/your-repo-name/your-image-name       }
+
